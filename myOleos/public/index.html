@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Marcos y Oleos</title>
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <h1 class="title">Marcos y Oleos</h1>
+    <div id="homepage">
+        <div id="ninjas"></div>
+        <div id="ninjas2"></div>
+        <div id="ninjas3"></div>
+    </div>
+
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+
+    <!-- Create React Component -->
+    <script type="text/babel">
+
+        var OrderByID = React.createClass({
+            getInitialState: function () {
+                return ({
+                    order: []
+                });
+            },
+            render: function () {
+                var order = this.state.order;
+                order = order.map(function (order, index) {
+                    return (
+                        <li key={index}>
+                            <span className="name">{order.userid}</span>
+                            <span className="rank">{order.username}</span>
+                            <span className="rank">{order.phone}</span>
+                            <span className="rank">{order.address}</span>
+                        </li>
+                    );
+                });
+                return (
+                    <div id="ninja-container">
+                        <h1>User Search</h1>
+                        <form id="search" onSubmit={this.handleSubmit}>
+                            <label>Enter User ID:</label>
+                            <input type="text" ref="OrderID" placeholder="User ID" required />
+                            <input type="submit" value="Find User" />
+                        </form>
+                        <ul>
+                            <li >
+                                <span className="name">UserID</span>
+                                <span className="rank">Username</span>
+                                <span className="rank">Phone</span>
+                                <span className="rank">Address</span>
+                            </li>
+                            {order}
+                        </ul>
+                    </div>
+                );
+            },
+            handleSubmit: function (e) {
+                e.preventDefault();
+                var OrderID = this.refs.OrderID.value;
+                fetch('/users/' + OrderID).then(function (data) {
+                    return data.json();
+                }).then(json => {
+                    this.setState({
+                        order: json
+                    });
+                    console.log(json);
+                });
+            }
+        });
+
+
+        //-------------------------------------------------------------------------
+
+        var OrderPost = React.createClass({
+            getInitialState: function () {
+                return ({
+                    order: []
+                });
+            },
+            render: function () {
+
+                return (
+                    <div id="ninja-container">
+                        <h1>User Create</h1>
+                        <form id="search" onSubmit={this.handleSubmit}>
+                            <label>Enter Username:</label>
+                            <input type="text" ref="username" placeholder="string" required />
+                            <label>Enter Address:</label>
+                            <input type="text" ref="address" placeholder="string" required />
+                            <label>Enter Phone:</label>
+                            <input type="text" ref="phone" placeholder="int" required />
+                            <label>Enter password:</label>
+                            <input type="text" ref="password" placeholder="string" required />
+                            <input type="submit" value="Submit User" />
+                        </form>
+
+                    </div>
+                );
+            },
+            handleSubmit: function (e) {
+                e.preventDefault();
+                var username = this.refs.username.value;
+                var address = this.refs.address.value;
+                var phone = this.refs.phone.value;
+                var password = this.refs.password.value;
+
+                fetch('/users', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'post',
+                    body: JSON.stringify({ username, address, phone, password })
+
+                })
+
+            }
+        });
+
+        //-------------------------------------------------------------
+
+        var OrderDelete = React.createClass({
+            getInitialState: function () {
+                return ({
+                    order: []
+                });
+            },
+            render: function () {
+
+                return (
+                    <div id="ninja-container">
+                        <h1>User Delete</h1>
+                        <form id="search" onSubmit={this.handleSubmit}>
+                            <label>Enter UserID:</label>
+                            <input type="text" ref="UserID" placeholder="UserID" required />
+                            <input type="submit" value="Delete User" />
+                        </form>
+
+                    </div>
+                );
+            },
+            handleSubmit: function (e) {
+                e.preventDefault();
+                var UserID = this.refs.UserID.value;
+
+
+                fetch('/users/' + UserID, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'delete',
+                    body: JSON.stringify({ UserID })
+
+                })
+
+            }
+        });
+
+
+
+        ReactDOM.render(<OrderByID />, document.getElementById('ninjas'));
+        ReactDOM.render(<OrderPost />, document.getElementById('ninjas2'));
+        ReactDOM.render(<OrderDelete />, document.getElementById('ninjas3'));
+    </script>
+
+
+</body>
+
+</html>
